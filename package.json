@@ -1,10 +1,21 @@
 {
-  "name": "static-route",
+  "name": "arsf-static-route",
   "version": "0.0.1",
   "description": "Static routing for static website",
   "main": "index.js",
+  "keywords": [
+    "static",
+    "routing"
+  ],
   "author": "Iqbal Mohammad Abdul Ghoni <iqballmags@gmail.com>",
+  "homepage": "https://github.com/Arsfiqball/static-route",
+  "url": "https://github.com/Arsfiqball/static-route/issues",
+  "email": "iqballmags@gmail.com",
   "license": "MIT",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/Arsfiqball/static-route.git"
+  },
   "dependencies": {
     "fs-extra": "^7.0.0"
   }
