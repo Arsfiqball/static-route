@@ -1,6 +1,6 @@
 {
   "name": "arsf-static-route",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Static routing for static website",
   "main": "index.js",
   "keywords": [
@@ -13,8 +13,8 @@
   "email": "iqballmags@gmail.com",
   "license": "MIT",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/Arsfiqball/static-route.git"
+    "type": "git",
+    "url": "https://github.com/Arsfiqball/static-route.git"
   },
   "dependencies": {
     "fs-extra": "^7.0.0"
