@@ -1,0 +1,11 @@
+{
+  "name": "static-route",
+  "version": "0.0.1",
+  "description": "Static routing for static website",
+  "main": "index.js",
+  "author": "Iqbal Mohammad Abdul Ghoni <iqballmags@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "fs-extra": "^7.0.0"
+  }
+}
