@@ -32,14 +32,24 @@ function serve (cb, opts) {
 
 function compile (cb, opts) {
   const router = (pathname, controller) => {
-    const outputDir = opts && opts.output
-      ? path.resolve(opts.output + pathname)
-      : path.resolve(process.cwd(), 'dist' + pathname)
+    pathname = pathname.split('/').filter(segment => segment).join('/')
+
+    const rootPath = opts && opts.output
+      ? path.resolve(opts.output)
+      : path.resolve(process.cwd(), 'dist')
+
+    const outputDir = !path.extname(pathname)
+      ? path.resolve(rootPath, pathname)
+      : path.resolve(rootPath, pathname.split('/').slice(0, -1).join('/'))
+
+    const outputName = !path.extname(pathname)
+      ? path.resolve(outputDir, 'index.html')
+      : path.resolve(outputDir, path.basename(pathname))
 
     const ctx = {
       send: body => {
-        fs.writeFile(outputDir + '/index.html', body, 'utf8')
-          .then(() => console.log('Published ' + pathname))
+        fs.writeFile(outputName, body, 'utf8')
+          .then(() => console.log('Published /' + pathname))
       }
     }
 
