@@ -4,6 +4,9 @@ const fs = require('fs-extra')
 const path = require('path')
 
 function serve (cb, opts) {
+  opts = typeof opts === 'object' ? opts : {}
+  opts.port = opts.port || 3000
+
   const server = http.createServer((req, res) => {
     const parsedURL = url.parse(req.url)
 
@@ -22,8 +25,8 @@ function serve (cb, opts) {
     res.end('Not found', 'utf8')
   })
 
-  server.listen(3000, () => {
-    console.log('server is listening on port 3000')
+  server.listen(opts.port, () => {
+    console.log('server is listening on port ' + opts.port)
   })
 }
 
