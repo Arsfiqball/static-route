@@ -9,8 +9,10 @@ yarn add arsf-static-route
 * callback: a ``function(ctx)``. Context will be passed to manipulate the output pages.
   * ``ctx.send(body)`` is the final data which will be sent.
 * options: staticRoute options
-  * ``port`` for server
-  * ``output`` path to compile
+  * ``port`` integer, for server (default: ``3000``)
+  * ``output`` path string, to compile (default: ``process.cwd() + /dist``)
+  * ``static`` array of path string (directory), served as static files
+  * ``clean`` boolean, clean old output before compiling
 
 Example:
 ```js
