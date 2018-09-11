@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Arsfiqball/static-route.svg?branch=master)](https://travis-ci.org/Arsfiqball/static-route)
+
 # Installation
 ```bash
 yarn add arsf-static-route
