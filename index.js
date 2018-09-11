@@ -6,9 +6,27 @@ const path = require('path')
 function serve (cb, opts) {
   opts = typeof opts === 'object' ? opts : {}
   opts.port = opts.port || 3000
+  opts.static = opts.static || []
 
   const server = http.createServer((req, res) => {
     const parsedURL = url.parse(req.url)
+
+    if (path.extname(parsedURL.pathname)) {
+      for (staticPath of opts.static) {
+        const searchFilePath = path.resolve(
+          staticPath,
+          parsedURL
+            .pathname
+            .split('/')
+            .filter(segment => segment)
+            .join('/')
+        )
+        if (fs.existsSync(searchFilePath)) {
+          const file = fs.readFileSync(searchFilePath)
+          res.end(file, 'utf8')
+        }
+      }
+    }
 
     const ctx = {
       send: body => {
@@ -31,12 +49,15 @@ function serve (cb, opts) {
 }
 
 function compile (cb, opts) {
+  opts = typeof opts === 'object' ? opts : {}
+  opts.static = opts.static || []
+
+  const rootPath = opts && opts.output
+    ? path.resolve(opts.output)
+    : path.resolve(process.cwd(), 'dist')
+
   const router = (pathname, controller) => {
     pathname = pathname.split('/').filter(segment => segment).join('/')
-
-    const rootPath = opts && opts.output
-      ? path.resolve(opts.output)
-      : path.resolve(process.cwd(), 'dist')
 
     const outputDir = !path.extname(pathname)
       ? path.resolve(rootPath, pathname)
@@ -58,6 +79,11 @@ function compile (cb, opts) {
   }
 
   cb(router)
+
+  for (staticPath of opts.static) {
+    fs.copy(staticPath, rootPath)
+      .then(() => console.log('Published ' + path.relative(process.cwd(), staticPath) + '/{files} -> /{files}'))
+  }
 }
 
 module.exports = function (mode, cb, opts) {
