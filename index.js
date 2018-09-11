@@ -51,10 +51,16 @@ function serve (cb, opts) {
 function compile (cb, opts) {
   opts = typeof opts === 'object' ? opts : {}
   opts.static = opts.static || []
+  opts.clean = opts.clean || true
 
   const rootPath = opts && opts.output
     ? path.resolve(opts.output)
     : path.resolve(process.cwd(), 'dist')
+
+  if (opts.clean) {
+    fs.emptyDirSync(rootPath)
+    console.log('Clean ', path.relative(process.cwd(), rootPath))
+  }
 
   const router = (pathname, controller) => {
     pathname = pathname.split('/').filter(segment => segment).join('/')
