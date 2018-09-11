@@ -2,6 +2,7 @@ const http = require('http')
 const url = require('url')
 const fs = require('fs-extra')
 const path = require('path')
+const logger = require('./logger')
 
 function serve (cb, opts) {
   opts = typeof opts === 'object' ? opts : {}
@@ -9,6 +10,7 @@ function serve (cb, opts) {
   opts.static = opts.static || []
 
   const server = http.createServer((req, res) => {
+    let routeIsFound = false
     const parsedURL = url.parse(req.url)
 
     if (path.extname(parsedURL.pathname)) {
@@ -24,9 +26,12 @@ function serve (cb, opts) {
         if (fs.existsSync(searchFilePath)) {
           const file = fs.readFileSync(searchFilePath)
           res.end(file, 'utf8')
+          routeIsFound = true
         }
       }
     }
+
+    if (routeIsFound) return
 
     const ctx = {
       send: body => {
@@ -35,16 +40,22 @@ function serve (cb, opts) {
     }
 
     const router = (pathname, controller) => {
-      if (pathname === parsedURL.pathname) controller(ctx)
+      if (pathname === parsedURL.pathname) {
+        routeIsFound = true
+        controller(ctx)
+      }
     }
 
     cb(router)
 
+    if (routeIsFound) return
+
+    res.statusCode = 404
     res.end('Not found', 'utf8')
   })
 
   server.listen(opts.port, () => {
-    console.log('server is listening on port ' + opts.port)
+    logger.info('server is listening on port ' + opts.port)
   })
 }
 
@@ -59,7 +70,7 @@ function compile (cb, opts) {
 
   if (opts.clean) {
     fs.emptyDirSync(rootPath)
-    console.log('Clean ', path.relative(process.cwd(), rootPath))
+    logger.info('Clean ' + path.relative(process.cwd(), rootPath))
   }
 
   const router = (pathname, controller) => {
@@ -75,20 +86,20 @@ function compile (cb, opts) {
 
     const ctx = {
       send: body => {
-        fs.writeFile(outputName, body, 'utf8')
-          .then(() => console.log('Published /' + pathname))
+        fs.writeFileSync(outputName, body, 'utf8')
+        logger.info('Published /' + pathname)
       }
     }
 
-    fs.ensureDir(outputDir)
-      .then(() => controller(ctx))
+    fs.ensureDirSync(outputDir)
+    controller(ctx)
   }
 
   cb(router)
 
   for (staticPath of opts.static) {
-    fs.copy(staticPath, rootPath)
-      .then(() => console.log('Published ' + path.relative(process.cwd(), staticPath) + '/{files} -> /{files}'))
+    fs.copySync(staticPath, rootPath)
+    logger.info('Published ' + path.relative(process.cwd(), staticPath) + '/{files} -> /{files}')
   }
 }
 

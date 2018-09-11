@@ -16,7 +16,15 @@
     "type": "git",
     "url": "https://github.com/Arsfiqball/static-route.git"
   },
+  "scripts": {
+    "test": "tape tests/**/*.js | tap-spec"
+  },
   "dependencies": {
     "fs-extra": "^7.0.0"
+  },
+  "devDependencies": {
+    "sinon": "^6.2.0",
+    "tap-spec": "^5.0.0",
+    "tape": "^4.9.1"
   }
 }
